@@ -44,16 +44,16 @@ export default function OnboardingPage() {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
-        background: "linear-gradient(180deg, #fff7ed 0%, #ffffff 30%)",
+        background: "linear-gradient(180deg, var(--green-50) 0%, #ffffff 30%)",
         padding: "0 16px",
       }}
     >
-      {/* Top orange accent bar */}
+      {/* Top green accent bar */}
       <div
         style={{
           width: "100%",
           height: 4,
-          background: "linear-gradient(90deg, var(--orange-400), var(--orange-600))",
+          background: "linear-gradient(90deg, var(--green-400), var(--green-600))",
           borderRadius: "0 0 4px 4px",
         }}
       />
@@ -71,12 +71,12 @@ export default function OnboardingPage() {
             width: 56,
             height: 56,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, var(--orange-400), var(--orange-600))",
+            background: "linear-gradient(135deg, var(--green-400), var(--green-600))",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             margin: "0 auto 16px",
-            boxShadow: "0 6px 20px rgba(249,115,22,0.3)",
+            boxShadow: "0 6px 20px rgba(34,197,94,0.3)",
           }}
         >
           <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -246,7 +246,7 @@ export default function OnboardingPage() {
                 whiteSpace: "nowrap",
               }}
             >
-              กิโลกรัม
+               กิโลกรัม
             </span>
           </div>
           {errors.weight && (
@@ -307,7 +307,7 @@ export default function OnboardingPage() {
         >
           <button
             type="button"
-            className="btn-orange-gradient"
+            className="btn-green-gradient"
             onClick={handleSubmit}
             style={{
               fontSize: "1.1rem",

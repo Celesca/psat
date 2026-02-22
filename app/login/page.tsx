@@ -10,11 +10,35 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Quick dev bypass to clear data and set new mock data
+  const handleQuickLogin = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const mockUser = {
+        email: email || "user@example.com",
+        loggedIn: true,
+        loginAt: new Date().toISOString(),
+      };
+      
+      const mockProfile = {
+        sex: "male",
+        birthday: "01/01/1990",
+        weight: 70,
+        height: 175,
+        createdAt: new Date().toISOString(),
+      };
+
+      localStorage.setItem("user", JSON.stringify(mockUser));
+      localStorage.setItem("userProfile", JSON.stringify(mockProfile));
+
+      router.push("/");
+    }, 500);
+  };
+
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate login
     setTimeout(() => {
       const userData = {
         email,
@@ -23,7 +47,6 @@ export default function LoginPage() {
       };
       localStorage.setItem("user", JSON.stringify(userData));
 
-      // Check if profile exists
       const profile = localStorage.getItem("userProfile");
       if (profile) {
         router.push("/");
@@ -61,7 +84,7 @@ export default function LoginPage() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(180deg, #fff7ed 0%, #ffffff 40%)",
+        background: "linear-gradient(180deg, var(--green-50) 0%, #ffffff 40%)",
         padding: "24px 16px",
       }}
     >
@@ -80,12 +103,12 @@ export default function LoginPage() {
             width: 72,
             height: 72,
             borderRadius: "50%",
-            background: "linear-gradient(135deg, var(--orange-400), var(--orange-600))",
+            background: "linear-gradient(135deg, var(--green-400), var(--green-600))",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
             marginBottom: 16,
-            boxShadow: "0 8px 24px rgba(249,115,22,0.3)",
+            boxShadow: "0 8px 24px rgba(34,197,94,0.3)",
           }}
         >
           <svg
@@ -137,6 +160,27 @@ export default function LoginPage() {
         >
           เข้าสู่ระบบ
         </h2>
+
+        {/* Quick Dev Bypass */}
+        <button 
+          onClick={handleQuickLogin}
+          type="button"
+          style={{
+            width: "100%",
+            background: "var(--green-100)",
+            color: "var(--green-700)",
+            fontWeight: 500,
+            padding: "8px",
+            border: "none",
+            borderRadius: "8px",
+            marginBottom: "16px",
+            fontSize: "0.85rem",
+            cursor: "pointer",
+            fontFamily: "inherit"
+          }}
+        >
+          🚀 ข้ามการเข้าสู่ระบบ (Dev Mode)
+        </button>
 
         <form onSubmit={handleLogin} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
           {/* Email / Phone */}
@@ -249,7 +293,7 @@ export default function LoginPage() {
                 href="#"
                 style={{
                   fontSize: "0.8rem",
-                  color: "var(--orange-500)",
+                  color: "var(--green-600)",
                   textDecoration: "none",
                   fontWeight: 500,
                 }}
@@ -262,7 +306,7 @@ export default function LoginPage() {
           {/* Login Button */}
           <button
             type="submit"
-            className="btn-orange-gradient"
+            className="btn-green-gradient"
             disabled={isLoading}
             style={{
               marginTop: 4,
@@ -404,7 +448,7 @@ export default function LoginPage() {
           <a
             href="#"
             style={{
-              color: "var(--orange-500)",
+              color: "var(--green-600)",
               fontWeight: 600,
               textDecoration: "none",
             }}
