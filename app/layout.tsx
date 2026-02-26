@@ -10,19 +10,13 @@ const prompt = Prompt({
 });
 
 export const metadata: Metadata = {
-  title: "Persona Health",
-  description:
-    "แพลตฟอร์มสุขภาพดิจิทัลที่เชื่อมต่อทุกแอปสุขภาพของคุณ — Persona Health connects all your health apps in one place.",
-  icons: {
-    icon: "/favicon.ico",
+  title: "รวมสุข (Health Hub)",
+  description: "ศูนย์รวมสุขภาพและสิทธิพิเศษสำหรับคุณ",
+  viewport: {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1, // prevents zooming on iOS inputs
   },
-};
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
 };
 
 export default function RootLayout({
