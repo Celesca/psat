@@ -2,11 +2,13 @@
 
 import BottomNav from "@/components/BottomNav";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 export default function ScanPage() {
   const router = useRouter();
   const [scanLinePos, setScanLinePos] = useState(0);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hasCameraError, setHasCameraError] = useState(false);
 
   // Animate the scan line bouncing up and down
   useEffect(() => {
@@ -14,6 +16,34 @@ export default function ScanPage() {
       setScanLinePos((prev) => (prev > 95 ? 0 : prev + 2));
     }, 30);
     return () => clearInterval(interval);
+  }, []);
+
+  // Initialize camera stream
+  useEffect(() => {
+    let stream: MediaStream | null = null;
+    
+    async function setupCamera() {
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: "environment" },
+        });
+        if (videoRef.current) {
+          videoRef.current.srcObject = stream;
+        }
+      } catch (err) {
+        console.error("Camera access failed", err);
+        setHasCameraError(true);
+      }
+    }
+
+    setupCamera();
+
+    return () => {
+      // Cleanup tracks on unmount
+      if (stream) {
+        stream.getTracks().forEach((track) => track.stop());
+      }
+    };
   }, []);
 
   return (
@@ -29,18 +59,42 @@ export default function ScanPage() {
         overflow: "hidden",
       }}
     >
-      {/* ── SIMULATED CAMERA BACKGROUND ── */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background: "linear-gradient(45deg, #1f2937, #111827, #374151)",
-          backgroundSize: "400% 400%",
-          animation: "gradientBG 10s ease infinite",
-          opacity: 0.8,
-          zIndex: 0,
-        }}
-      />
+      {/* ── LIVE CAMERA BACKGROUND ── */}
+      {!hasCameraError ? (
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          muted
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            position: "absolute",
+            inset: 0,
+            background: "linear-gradient(45deg, #1f2937, #111827, #374151)",
+            backgroundSize: "400% 400%",
+            animation: "gradientBG 10s ease infinite",
+            zIndex: 0,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <span style={{ color: "var(--gray-400)", fontSize: "0.85rem", padding: 20, textAlign: "center" }}>
+            ไม่สามารถเข้าถึงกล้องได้ โปรดตรวจสอบการอนุญาต
+          </span>
+        </div>
+      )}
+      
       <style>{`
         @keyframes gradientBG {
           0% { background-position: 0% 50%; }
