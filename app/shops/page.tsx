@@ -186,90 +186,19 @@ export default function ShopsPage() {
           background: "#e8f0e8",
         }}
       >
-        {/* Fake roads / grid */}
-        <div style={{ position: "absolute", inset: 0, overflow: "hidden" }}>
-          {/* Horizontal roads */}
-          {[20, 40, 60, 80].map((top) => (
-            <div key={`h-${top}`} style={{ position: "absolute", top: `${top}%`, left: 0, right: 0, height: top === 40 ? 6 : 3, background: top === 40 ? "#d4d4d4" : "#e0e0e0", opacity: 0.7 }} />
-          ))}
-          {/* Vertical roads */}
-          {[25, 50, 75].map((left) => (
-            <div key={`v-${left}`} style={{ position: "absolute", left: `${left}%`, top: 0, bottom: 0, width: left === 50 ? 6 : 3, background: left === 50 ? "#d4d4d4" : "#e0e0e0", opacity: 0.7 }} />
-          ))}
-          {/* Green park patches */}
-          <div style={{ position: "absolute", top: "30%", left: "10%", width: 50, height: 35, borderRadius: 8, background: "#bbf7d0", opacity: 0.6 }} />
-          <div style={{ position: "absolute", top: "65%", left: "60%", width: 60, height: 40, borderRadius: 12, background: "#bbf7d0", opacity: 0.5 }} />
-          {/* Water */}
-          <div style={{ position: "absolute", bottom: 0, right: 0, width: "30%", height: "15%", background: "linear-gradient(135deg, #bae6fd, #7dd3fc)", opacity: 0.4, borderTopLeftRadius: "40%" }} />
-        </div>
-
-        {/* Center "You are here" pulse */}
-        <div
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            zIndex: 10,
-          }}
-        >
-          <div style={{
-            width: 16,
-            height: 16,
-            borderRadius: "50%",
-            background: "#3b82f6",
-            border: "3px solid white",
-            boxShadow: "0 0 0 6px rgba(59,130,246,0.2)",
-          }} />
-        </div>
-
-        {/* Markers */}
-        {filteredPlaces.map((place) => {
-          const meta = categoryMeta[place.category as Exclude<Category, "all">];
-          return (
-            <div
-              key={place.id}
-              onClick={() => setSelectedPlace(selectedPlace?.id === place.id ? null : place)}
-              style={{
-                position: "absolute",
-                top: `${place.lat}%`,
-                left: `${place.lng}%`,
-                transform: "translate(-50%, -100%)",
-                cursor: "pointer",
-                transition: "transform 0.2s ease",
-                zIndex: selectedPlace?.id === place.id ? 15 : 5,
-                filter: selectedPlace?.id === place.id ? "drop-shadow(0 4px 8px rgba(0,0,0,0.25))" : "none",
-              }}
-            >
-              <div style={{ transform: selectedPlace?.id === place.id ? "scale(1.3)" : "scale(1)", transition: "transform 0.2s ease" }}>
-                <MapPin color={meta.color} size={selectedPlace?.id === place.id ? 36 : 28} />
-              </div>
-              {selectedPlace?.id === place.id && (
-                <div
-                  style={{
-                    position: "absolute",
-                    top: -60,
-                    left: "50%",
-                    transform: "translateX(-50%)",
-                    background: "white",
-                    borderRadius: 10,
-                    padding: "6px 10px",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.15)",
-                    whiteSpace: "nowrap",
-                    fontSize: "0.7rem",
-                    fontWeight: 600,
-                    color: "var(--gray-800)",
-                    zIndex: 20,
-                    border: `2px solid ${meta.color}20`,
-                  }}
-                >
-                  {meta.icon} {place.name}
-                  <div style={{ position: "absolute", bottom: -6, left: "50%", transform: "translateX(-50%) rotate(45deg)", width: 10, height: 10, background: "white", borderRight: `1px solid ${meta.color}20`, borderBottom: `1px solid ${meta.color}20` }} />
-                </div>
-              )}
-            </div>
-          );
-        })}
+        <iframe
+          width="100%"
+          height="100%"
+          style={{ border: 0, position: "absolute", inset: 0 }}
+          loading="lazy"
+          allowFullScreen
+          referrerPolicy="no-referrer-when-downgrade"
+          src={`https://maps.google.com/maps?q=${encodeURIComponent(
+            selectedPlace 
+              ? `${selectedPlace.name} ${selectedPlace.address}` 
+              : searchQuery ? searchQuery : "สวนสาธารณะ กรุงเทพ"
+          )}&t=&z=14&ie=UTF8&iwloc=&output=embed`}
+        ></iframe>
       </div>
 
       {/* ── BOTTOM SHEET: NEARBY LIST ── */}
