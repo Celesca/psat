@@ -10,7 +10,7 @@ const prompt = Prompt({
 });
 
 export const metadata: Metadata = {
-  title: "รวมสุข (Health Hub)",
+  title: "Health Hub (รวมสุข)",
   description: "ศูนย์รวมสุขภาพและสิทธิพิเศษสำหรับคุณ",
   viewport: {
     width: "device-width",
