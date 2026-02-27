@@ -10,6 +10,8 @@ export default function AppIntegrationSection() {
     { name: "Fitbit", src: "/logos/fitbit.png" },
     { name: "Oura", src: "/logos/oura.png" },
     { name: "MyFitnessPal", src: "/logos/myfitness.png" },
+    { name: "Health-Link", src: "/logos/healthlink.png", href: "https://healthlink.go.th/" },
+    { name: "หมอพร้อม", src: "/logos/mhoprom.png", href: "https://mohpromtstation.moph.go.th/login" },
   ];
 
   return (
