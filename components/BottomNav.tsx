@@ -38,7 +38,7 @@ export default function BottomNav() {
           <circle cx="12" cy="13" r="4" />
         </svg>
       ),
-      label: "Scan",
+      label: "สแกน",
       href: "/scan",
       isScan: true,
     },

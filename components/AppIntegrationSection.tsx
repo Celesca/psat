@@ -57,7 +57,7 @@ export default function AppIntegrationSection() {
           <span style={{ fontSize: "1.1rem" }}>🔗</span>
         </div>
         <p style={{ fontWeight: 600, fontSize: "0.9rem", color: "var(--gray-800)", margin: 0, letterSpacing: "-0.01em" }}>
-          แอปส่งข้อมูล จากที่ใช้งานอยู่ แล้ว AI ประมวลผล
+          เชื่อมต่อแอปสุขภาพ — AI วิเคราะห์ข้อมูลให้คุณ
         </p>
       </div>
 
@@ -106,7 +106,7 @@ export default function AppIntegrationSection() {
             boxShadow: "0 4px 12px rgba(0,0,0,0.06)"
           }}>▶️</div>
           <p style={{ fontWeight: 700, fontSize: "0.8rem", color: "var(--gray-700)", marginBottom: 10, textAlign: "center" }}>
-            ดู VDO รับแต้ม
+            ดูวิดีโอ รับคะแนน
           </p>
           <div
             style={{
@@ -120,7 +120,7 @@ export default function AppIntegrationSection() {
             }}
           >
             <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "white" }}>
-              +10 Point
+              +10 คะแนน
             </span>
           </div>
         </div>
