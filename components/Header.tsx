@@ -6,6 +6,7 @@ import InvitationModal from "./InvitationModal";
 
 export default function Header() {
   const [isInviteOpen, setIsInviteOpen] = useState(false);
+  const [showRewardHelp, setShowRewardHelp] = useState(false);
 
   return (
     <>
@@ -173,20 +174,133 @@ export default function Header() {
               <p style={{ fontSize: "1.2rem", fontWeight: 800, color: "white", lineHeight: 1.1 }}>275 <span style={{ fontSize: "0.75rem", fontWeight: 500, opacity: 0.85 }}>คะแนน</span></p>
             </div>
           </div>
-          <div
-            style={{
-              fontSize: "0.72rem",
-              fontWeight: 600,
-              color: "white",
-              background: "rgba(255,255,255,0.15)",
-              border: "1px solid rgba(255,255,255,0.25)",
-              borderRadius: 20,
-              padding: "5px 12px",
-              cursor: "pointer",
-            }}
-          >
-            แลกรับสิทธิ์ →
+          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+            <button
+              type="button"
+              aria-label="วิธีรับคะแนนและเงื่อนไขรางวัล"
+              title="วิธีรับคะแนนและเงื่อนไขรางวัล"
+              onClick={() => setShowRewardHelp((prev) => !prev)}
+              style={{
+                width: 32,
+                height: 32,
+                borderRadius: "50%",
+                border: "1px solid rgba(255,255,255,0.35)",
+                background: "rgba(255,255,255,0.2)",
+                color: "white",
+                fontSize: "0.85rem",
+                fontWeight: 800,
+                fontFamily: "inherit",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              ?
+            </button>
+            <Link
+              href="/privileges"
+              aria-label="ไปหน้าแลกรับสิทธิ์"
+              style={{
+                textDecoration: "none",
+                fontSize: "0.72rem",
+                fontWeight: 600,
+                color: "white",
+                background: "rgba(255,255,255,0.15)",
+                border: "1px solid rgba(255,255,255,0.25)",
+                borderRadius: 20,
+                padding: "5px 12px",
+                cursor: "pointer",
+              }}
+            >
+              แลกรับสิทธิ์ →
+            </Link>
           </div>
+
+          {showRewardHelp && (
+            <>
+              <button
+                type="button"
+                aria-label="ปิดหน้าต่างช่วยเหลือคะแนน"
+                onClick={() => setShowRewardHelp(false)}
+                style={{
+                  position: "fixed",
+                  inset: 0,
+                  background: "rgba(0,0,0,0.35)",
+                  border: "none",
+                  zIndex: 999,
+                  cursor: "pointer",
+                }}
+              />
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="วิธีรับคะแนนและแลกรางวัล"
+                style={{
+                  position: "fixed",
+                  left: "50%",
+                  top: "50%",
+                  transform: "translate(-50%, -50%)",
+                  width: "min(92vw, 360px)",
+                  background: "white",
+                  color: "var(--gray-700)",
+                  borderRadius: 14,
+                  border: "1px solid var(--gray-200)",
+                  boxShadow: "0 16px 36px rgba(0,0,0,0.25)",
+                  padding: 14,
+                  zIndex: 1000,
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                  <p style={{ margin: 0, fontSize: "0.85rem", fontWeight: 700, color: "var(--gray-800)" }}>
+                    วิธีรับคะแนนและแลกรางวัล
+                  </p>
+                  <button
+                    type="button"
+                    aria-label="ปิด"
+                    onClick={() => setShowRewardHelp(false)}
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      border: "1px solid var(--gray-200)",
+                      background: "white",
+                      color: "var(--gray-600)",
+                      cursor: "pointer",
+                      fontSize: "0.9rem",
+                      lineHeight: 1,
+                    }}
+                  >
+                    x
+                  </button>
+                </div>
+
+                <p style={{ margin: 0, fontSize: "0.75rem", lineHeight: 1.6, color: "var(--gray-600)" }}>
+                  สะสมคะแนนจากกิจกรรมสุขภาพประจำวัน แล้วกด "แลกรับสิทธิ์" เพื่อใช้คะแนนแลกคูปองและรางวัล
+                </p>
+
+                <Link
+                  href="/privileges"
+                  onClick={() => setShowRewardHelp(false)}
+                  style={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                    marginTop: 12,
+                    padding: "7px 12px",
+                    borderRadius: 999,
+                    textDecoration: "none",
+                    fontSize: "0.72rem",
+                    fontWeight: 700,
+                    color: "white",
+                    background: "var(--green-600)",
+                  }}
+                >
+                  ไปหน้าแลกรับสิทธิ์
+                </Link>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

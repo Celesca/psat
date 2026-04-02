@@ -13,35 +13,87 @@ interface AgentInfo {
 }
 
 interface ChatMessage {
+  id: string;
   role: "user" | "assistant";
   content: string;
+  createdAt: string;
   agent?: AgentInfo;
+}
+
+const CHAT_STORAGE_KEY = "healthhub_chat_history_v1";
+
+const defaultAssistantMessage: ChatMessage = {
+  id: "welcome",
+  role: "assistant",
+  content:
+    "สวัสดีค่ะ! 👋 ฉันคือผู้ช่วย AI ของ Health Hub พร้อมช่วยเรื่องสุขภาพ สิทธิพิเศษ ร้านค้า และอื่นๆ ถามได้เลยค่ะ!",
+  createdAt: new Date().toISOString(),
+};
+
+function createMessage(
+  role: ChatMessage["role"],
+  content: string,
+  agent?: AgentInfo
+): ChatMessage {
+  return {
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    role,
+    content,
+    createdAt: new Date().toISOString(),
+    agent,
+  };
+}
+
+function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("th-TH", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export default function Chatbot() {
   const [open, setOpen] = useState(false);
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    {
-      role: "assistant",
-      content:
-        "สวัสดีค่ะ! 👋 ฉันคือผู้ช่วย AI ของ Health Hub พร้อมช่วยเรื่องสุขภาพ สิทธิพิเศษ ร้านค้า และอื่นๆ ถามได้เลยค่ะ!",
-    },
-  ]);
+  const [messages, setMessages] = useState<ChatMessage[]>([defaultAssistantMessage]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [showAgent, setShowAgent] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    try {
+      const saved = localStorage.getItem(CHAT_STORAGE_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved) as ChatMessage[];
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        setMessages(parsed);
+      }
+    } catch {
+      // Ignore corrupted storage and continue with default message
+    }
+  }, []);
+
+  useEffect(() => {
+    if (messages.length === 0) return;
+    localStorage.setItem(CHAT_STORAGE_KEY, JSON.stringify(messages.slice(-40)));
+  }, [messages]);
+
+  useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
 
-  const sendMessage = async () => {
-    const text = input.trim();
+  const resetChat = () => {
+    setMessages([defaultAssistantMessage]);
+    setShowAgent(null);
+    localStorage.removeItem(CHAT_STORAGE_KEY);
+  };
+
+  const sendMessage = async (value?: string) => {
+    const text = (value ?? input).trim();
     if (!text || loading) return;
 
-    const userMsg: ChatMessage = { role: "user", content: text };
-    setMessages((prev) => [...prev, userMsg]);
+    const userMsg = createMessage("user", text);
+    const nextHistory = [...messages, userMsg];
+    setMessages(nextHistory);
     setInput("");
     setLoading(true);
 
@@ -51,7 +103,7 @@ export default function Chatbot() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           message: text,
-          history: messages.map((m) => ({
+          history: nextHistory.map((m) => ({
             role: m.role,
             content: m.content,
           })),
@@ -59,19 +111,12 @@ export default function Chatbot() {
       });
 
       const data = await res.json();
-      const botMsg: ChatMessage = {
-        role: "assistant",
-        content: data.reply,
-        agent: data.agent,
-      };
+      const botMsg = createMessage("assistant", data.reply, data.agent);
       setMessages((prev) => [...prev, botMsg]);
     } catch {
       setMessages((prev) => [
         ...prev,
-        {
-          role: "assistant",
-          content: "ขออภัยค่ะ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
-        },
+        createMessage("assistant", "ขออภัยค่ะ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง"),
       ]);
     } finally {
       setLoading(false);
@@ -205,9 +250,26 @@ export default function Chatbot() {
                   fontSize: "0.7rem",
                 }}
               >
-                AI Agent + RAG | พร้อมช่วยเหลือ
+                Chat history พร้อมต่อเนื่องทุกครั้งที่กลับมา
               </div>
             </div>
+            <button
+              onClick={resetChat}
+              style={{
+                background: "rgba(255,255,255,0.15)",
+                border: "1px solid rgba(255,255,255,0.28)",
+                borderRadius: 20,
+                minHeight: 34,
+                padding: "0 10px",
+                color: "white",
+                fontSize: "0.68rem",
+                fontWeight: 600,
+                fontFamily: "inherit",
+                cursor: "pointer",
+              }}
+            >
+              เริ่มใหม่
+            </button>
             <button
               onClick={() => setOpen(false)}
               style={{
@@ -255,12 +317,33 @@ export default function Chatbot() {
                     display: "flex",
                     justifyContent:
                       msg.role === "user" ? "flex-end" : "flex-start",
+                    alignItems: "flex-end",
+                    gap: 6,
                   }}
                 >
+                  {msg.role === "assistant" && (
+                    <div
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: "50%",
+                        background: "var(--green-100)",
+                        color: "var(--green-700)",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "0.72rem",
+                        fontWeight: 800,
+                        flexShrink: 0,
+                      }}
+                    >
+                      AI
+                    </div>
+                  )}
                   <div
                     style={{
                       maxWidth: "82%",
-                      padding: "10px 14px",
+                      padding: "9px 12px 8px",
                       borderRadius:
                         msg.role === "user"
                           ? "16px 16px 4px 16px"
@@ -279,8 +362,40 @@ export default function Chatbot() {
                       whiteSpace: "pre-wrap",
                     }}
                   >
-                    {msg.content}
+                    <p style={{ margin: 0 }}>{msg.content}</p>
+                    <p
+                      style={{
+                        margin: "6px 0 0",
+                        fontSize: "0.62rem",
+                        color:
+                          msg.role === "user"
+                            ? "rgba(255,255,255,0.8)"
+                            : "var(--gray-400)",
+                        textAlign: "right",
+                      }}
+                    >
+                      {formatTime(msg.createdAt)}
+                    </p>
                   </div>
+                  {msg.role === "user" && (
+                    <div
+                      style={{
+                        width: 28,
+                        height: 28,
+                        borderRadius: "50%",
+                        background: "var(--green-700)",
+                        color: "white",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "0.75rem",
+                        fontWeight: 800,
+                        flexShrink: 0,
+                      }}
+                    >
+                      คุณ
+                    </div>
+                  )}
                 </div>
 
                 {/* Agent info toggle */}
@@ -464,50 +579,7 @@ export default function Chatbot() {
               {quickQuestions.map((q, i) => (
                 <button
                   key={i}
-                  onClick={() => {
-                    setInput(q);
-                    setTimeout(() => {
-                      const fakeEvent = {
-                        key: "Enter",
-                        shiftKey: false,
-                        preventDefault: () => {},
-                      } as React.KeyboardEvent;
-                      // Just set and send
-                      setInput("");
-                      setMessages((prev) => [
-                        ...prev,
-                        { role: "user", content: q },
-                      ]);
-                      setLoading(true);
-                      fetch("/api/chat", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({ message: q, history: [] }),
-                      })
-                        .then((r) => r.json())
-                        .then((data) => {
-                          setMessages((prev) => [
-                            ...prev,
-                            {
-                              role: "assistant",
-                              content: data.reply,
-                              agent: data.agent,
-                            },
-                          ]);
-                        })
-                        .catch(() => {
-                          setMessages((prev) => [
-                            ...prev,
-                            {
-                              role: "assistant",
-                              content:
-                                "ขออภัยค่ะ เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
-                            },
-                          ]);
-                        })
-                        .finally(() => setLoading(false));
-                    }, 0);
-                  }}
+                  onClick={() => sendMessage(q)}
                   style={{
                     background: "white",
                     border: "1px solid var(--green-200)",

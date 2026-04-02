@@ -34,10 +34,22 @@ const healthTips = [
   { title: "เดินเพิ่มอีกนิด", desc: "อีก 1,753 ก้าวถึงเป้า!", icon: "👟", bg: "#dcfce7" },
 ];
 
-const connectedSources = [
+const initialConnectedSources = [
   { name: "Apple Health", status: "synced", time: "5 นาทีที่แล้ว", color: "#16a34a" },
   { name: "Garmin Watch", status: "synced", time: "12 นาทีที่แล้ว", color: "#16a34a" },
   { name: "หมอพร้อม", status: "synced", time: "1 ชม. ที่แล้ว", color: "#16a34a" },
+];
+
+const importableApps = [
+  "หมอพร้อม",
+  "Health Link",
+  "กระเป๋าตัง",
+  "สมุดสุขภาพ",
+  "Persona Health",
+  "Telehealth",
+  "สปสช.",
+  "ทางรัฐ",
+  "Medscape",
 ];
 
 /* ── Page ── */
@@ -46,6 +58,23 @@ export default function HomePage() {
   const [user, setUser] = useState<UserData | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const [connectedSources, setConnectedSources] = useState(initialConnectedSources);
+  const [showImportModal, setShowImportModal] = useState(false);
+
+  const handleImportSource = (name: string) => {
+    setConnectedSources((prev) => {
+      if (prev.some((source) => source.name === name)) {
+        return prev.map((source) =>
+          source.name === name ? { ...source, time: "เมื่อสักครู่" } : source
+        );
+      }
+
+      return [
+        { name, status: "synced", time: "เมื่อสักครู่", color: "#16a34a" },
+        ...prev,
+      ];
+    });
+  };
 
   useEffect(() => {
     const userData = localStorage.getItem("user");
@@ -94,9 +123,29 @@ export default function HomePage() {
               </div>
               <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--gray-800)" }}>แหล่งข้อมูลที่เชื่อมต่อ</span>
             </div>
-            <span style={{ fontSize: "0.65rem", fontWeight: 600, background: "var(--green-50)", color: "var(--green-700)", padding: "3px 10px", borderRadius: 20, border: "1px solid var(--green-100)" }}>
-              {connectedSources.length} แหล่ง
-            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <button
+                type="button"
+                onClick={() => setShowImportModal(true)}
+                style={{
+                  minHeight: 28,
+                  borderRadius: 14,
+                  border: "1px solid var(--green-200)",
+                  background: "var(--green-50)",
+                  color: "var(--green-700)",
+                  fontSize: "0.65rem",
+                  fontWeight: 700,
+                  padding: "0 10px",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                + เพิ่ม
+              </button>
+              <span style={{ fontSize: "0.65rem", fontWeight: 600, background: "var(--green-50)", color: "var(--green-700)", padding: "3px 10px", borderRadius: 20, border: "1px solid var(--green-100)" }}>
+                {connectedSources.length} แหล่ง
+              </span>
+            </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
             {connectedSources.map((src) => (
@@ -108,6 +157,71 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+
+        {showImportModal && (
+          <>
+            <button
+              type="button"
+              onClick={() => setShowImportModal(false)}
+              aria-label="ปิดหน้าต่างนำเข้าข้อมูล"
+              style={{ position: "fixed", inset: 0, border: "none", background: "rgba(0,0,0,0.35)", zIndex: 999 }}
+            />
+            <div
+              role="dialog"
+              aria-modal="true"
+              style={{
+                position: "fixed",
+                left: "50%",
+                top: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "min(92vw, 360px)",
+                background: "white",
+                borderRadius: 16,
+                border: "1px solid var(--gray-200)",
+                boxShadow: "0 16px 42px rgba(0,0,0,0.2)",
+                padding: 14,
+                zIndex: 1000,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+                <p style={{ margin: 0, fontSize: "0.88rem", fontWeight: 700, color: "var(--gray-800)" }}>นำเข้าข้อมูลจากแอปอื่น</p>
+                <button
+                  type="button"
+                  onClick={() => setShowImportModal(false)}
+                  style={{ width: 30, height: 30, borderRadius: "50%", border: "1px solid var(--gray-200)", background: "white", cursor: "pointer", color: "var(--gray-500)" }}
+                >
+                  x
+                </button>
+              </div>
+
+              <div className="hide-scroll" style={{ display: "flex", flexWrap: "wrap", gap: 8, maxHeight: 220, overflowY: "auto" }}>
+                {importableApps.map((name) => (
+                  <button
+                    key={name}
+                    type="button"
+                    onClick={() => {
+                      handleImportSource(name);
+                      setShowImportModal(false);
+                    }}
+                    style={{
+                      border: "1px solid var(--green-200)",
+                      background: "var(--green-50)",
+                      borderRadius: 999,
+                      padding: "7px 12px",
+                      fontSize: "0.72rem",
+                      fontWeight: 600,
+                      color: "var(--green-700)",
+                      cursor: "pointer",
+                      fontFamily: "inherit",
+                    }}
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
 
         {/* Health Tips */}
         <div className="animate-fade-in-up" style={{ animationDelay: "0.2s", marginBottom: 14 }}>
@@ -155,7 +269,7 @@ export default function HomePage() {
         </div>
 
         {/* App Integration */}
-        <AppIntegrationSection />
+        <AppIntegrationSection onImportApp={handleImportSource} />
       </main>
 
       <BottomNav />

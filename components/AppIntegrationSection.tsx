@@ -16,37 +16,54 @@ interface Category {
 
 const categories: Category[] = [
   {
-    label: "อุปกรณ์สวมใส่",
-    icon: "⌚",
+    label: "การเข้าถึงข้อมูลและการจัดการสุขภาพส่วนบุคคล",
+    icon: "📋",
     apps: [
-      { name: "Apple Fit", src: "/logos/apple-fit.png" },
-      { name: "Garmin", src: "/logos/garmin.png" },
-      { name: "Fitbit", src: "/logos/fitbit.png" },
-      { name: "Oura", src: "/logos/oura.png" },
+      { name: "หมอพร้อม", src: "/logos/mhoprom.png", href: "https://mohpromtstation.moph.go.th/login" },
+      { name: "Health Link", src: "/logos/healthlink.png", href: "https://healthlink.go.th/" },
+      { name: "กระเป๋าตัง", src: "/logos/paotang.png" },
+      { name: "สมุดสุขภาพ", src: "/logos/health_profile.png" },
     ],
   },
   {
-    label: "แอปสุขภาพ",
-    icon: "💚",
+    label: "การประเมินความเสี่ยง",
+    icon: "🩺",
     apps: [
-      { name: "Health", src: "/logos/health.png" },
-      { name: "Strava", src: "/logos/strava.png" },
-      { name: "MyFitnessPal", src: "/logos/myfitness.png" },
-      { name: "Medscape", src: "/logos/medscape_icon.png", href: "https://reference.medscape.com/drug-interactionchecker" },
+      { name: "Persona Health", src: "/logos/persona_health.png" },
     ],
   },
   {
-    label: "ภาครัฐ",
+    label: "การเข้าถึงบริการทางการแพทย์",
+    icon: "🏥",
+    apps: [
+      { name: "Telehealth", src: "/logos/telemedicine.webp" },
+      { name: "สปสช.", src: "/logos/สปสช.png" },
+    ],
+  },
+  {
+    label: "บริการภาครัฐ",
     icon: "🏛️",
     apps: [
-      { name: "Health-Link", src: "/logos/healthlink.png", href: "https://healthlink.go.th/" },
-      { name: "หมอพร้อม", src: "/logos/mhoprom.png", href: "https://mohpromtstation.moph.go.th/login" },
+      { name: "ทางรัฐ", src: "/logos/ทางรัฐ.png" },
+      { name: "Medscape", src: "/logos/medscape_icon.png", href: "https://reference.medscape.com/drug-interactionchecker" },
     ],
   },
 ];
 
-export default function AppIntegrationSection() {
+interface AppIntegrationSectionProps {
+  onImportApp?: (name: string) => void;
+}
+
+export default function AppIntegrationSection({ onImportApp }: AppIntegrationSectionProps) {
   const [activeCategory, setActiveCategory] = useState(0);
+  const [selectedApp, setSelectedApp] = useState<AppItem | null>(null);
+  const [importedApps, setImportedApps] = useState<string[]>([]);
+
+  const handleImport = (app: AppItem) => {
+    setImportedApps((prev) => (prev.includes(app.name) ? prev : [...prev, app.name]));
+    onImportApp?.(app.name);
+    setSelectedApp(null);
+  };
 
   return (
     <div
@@ -148,14 +165,13 @@ export default function AppIntegrationSection() {
         }}
       >
         {categories[activeCategory].apps.map((app, idx) => {
-          const Wrapper = app.href ? "a" : "div";
+          const isImported = importedApps.includes(app.name);
           return (
-            <Wrapper
+            <button
               key={idx}
-              href={app.href}
-              target={app.href ? "_blank" : undefined}
-              rel={app.href ? "noopener noreferrer" : undefined}
               title={app.name}
+              onClick={() => setSelectedApp(app)}
+              type="button"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -166,23 +182,20 @@ export default function AppIntegrationSection() {
                 background: "white",
                 border: "1px solid var(--gray-100)",
                 boxShadow: "0 1px 4px rgba(0,0,0,0.03)",
-                cursor: app.href ? "pointer" : "default",
+                cursor: "pointer",
                 textDecoration: "none",
                 transition: "all 0.2s ease",
+                fontFamily: "inherit",
               }}
               onMouseEnter={(e) => {
-                if (app.href) {
-                  (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
-                  (e.currentTarget as HTMLElement).style.borderColor = "var(--green-300)";
-                }
+                (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 12px rgba(0,0,0,0.08)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--green-300)";
               }}
               onMouseLeave={(e) => {
-                if (app.href) {
-                  (e.currentTarget as HTMLElement).style.transform = "none";
-                  (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(0,0,0,0.03)";
-                  (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-100)";
-                }
+                (e.currentTarget as HTMLElement).style.transform = "none";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 1px 4px rgba(0,0,0,0.03)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--gray-100)";
               }}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -207,7 +220,7 @@ export default function AppIntegrationSection() {
               }}>
                 {app.name}
               </span>
-              {app.href && (
+              {isImported ? (
                 <span style={{
                   fontSize: "0.5rem",
                   color: "var(--green-600)",
@@ -217,13 +230,134 @@ export default function AppIntegrationSection() {
                   padding: "1px 6px",
                   border: "1px solid var(--green-100)",
                 }}>
-                  เปิด
+                  เชื่อมต่อแล้ว
+                </span>
+              ) : (
+                <span style={{
+                  fontSize: "0.5rem",
+                  color: "var(--gray-500)",
+                  fontWeight: 600,
+                  background: "var(--gray-50)",
+                  borderRadius: 6,
+                  padding: "1px 6px",
+                  border: "1px solid var(--gray-100)",
+                }}>
+                  แตะเพื่อจัดการ
                 </span>
               )}
-            </Wrapper>
+            </button>
           );
         })}
       </div>
+
+      {selectedApp && (
+        <>
+          <button
+            type="button"
+            onClick={() => setSelectedApp(null)}
+            aria-label="ปิดหน้าต่างเชื่อมต่อแอป"
+            style={{
+              position: "fixed",
+              inset: 0,
+              border: "none",
+              background: "rgba(0,0,0,0.35)",
+              zIndex: 999,
+            }}
+          />
+
+          <div
+            role="dialog"
+            aria-modal="true"
+            style={{
+              position: "fixed",
+              left: "50%",
+              top: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "min(92vw, 360px)",
+              background: "white",
+              borderRadius: 16,
+              border: "1px solid var(--gray-200)",
+              boxShadow: "0 16px 42px rgba(0,0,0,0.2)",
+              padding: 16,
+              zIndex: 1000,
+            }}
+          >
+            <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={selectedApp.src}
+                alt={selectedApp.name}
+                style={{ width: 42, height: 42, objectFit: "contain", borderRadius: 10, border: "1px solid var(--gray-100)" }}
+              />
+              <div style={{ flex: 1 }}>
+                <p style={{ margin: 0, fontSize: "0.9rem", fontWeight: 700, color: "var(--gray-800)" }}>{selectedApp.name}</p>
+                <p style={{ margin: "2px 0 0", fontSize: "0.68rem", color: "var(--gray-500)" }}>นำเข้าข้อมูลสุขภาพและเปิดแอปปลายทาง</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedApp(null)}
+                style={{
+                  width: 30,
+                  height: 30,
+                  borderRadius: "50%",
+                  border: "1px solid var(--gray-200)",
+                  background: "white",
+                  color: "var(--gray-500)",
+                  cursor: "pointer",
+                  fontSize: "0.85rem",
+                }}
+              >
+                x
+              </button>
+            </div>
+
+            <div style={{ display: "flex", gap: 8 }}>
+              <button
+                type="button"
+                onClick={() => handleImport(selectedApp)}
+                style={{
+                  flex: 1,
+                  minHeight: 42,
+                  borderRadius: 12,
+                  border: "1px solid var(--green-300)",
+                  background: "var(--green-50)",
+                  color: "var(--green-700)",
+                  fontWeight: 700,
+                  fontSize: "0.75rem",
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                }}
+              >
+                นำเข้าข้อมูล
+              </button>
+
+              <button
+                type="button"
+                disabled={!selectedApp.href}
+                onClick={() => {
+                  if (selectedApp.href) {
+                    window.open(selectedApp.href, "_blank", "noopener,noreferrer");
+                  }
+                }}
+                style={{
+                  flex: 1,
+                  minHeight: 42,
+                  borderRadius: 12,
+                  border: "none",
+                  background: selectedApp.href ? "var(--green-600)" : "var(--gray-200)",
+                  color: "white",
+                  fontWeight: 700,
+                  fontSize: "0.75rem",
+                  cursor: selectedApp.href ? "pointer" : "not-allowed",
+                  fontFamily: "inherit",
+                }}
+              >
+                {selectedApp.href ? "เปิดแอปปลายทาง" : "ยังไม่มีลิงก์แอป"}
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }
