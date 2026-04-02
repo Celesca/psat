@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Prompt } from "next/font/google";
 import "./globals.css";
+import Chatbot from "@/components/Chatbot";
 
 const prompt = Prompt({
   variable: "--font-prompt",
@@ -26,7 +27,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="th">
-      <body className={prompt.variable}>{children}</body>
+      <body className={prompt.variable}>
+        {children}
+        <Chatbot />
+      </body>
     </html>
   );
 }

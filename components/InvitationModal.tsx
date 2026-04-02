@@ -75,10 +75,10 @@ export default function InvitationModal({ isOpen, onClose }: { isOpen: boolean; 
             🤝
           </div>
           <h2 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--gray-800)", marginBottom: 8 }}>
-            เชิญเพื่อนมาใช้งาน
+            ชวนเพื่อนมาใช้งาน
           </h2>
           <p style={{ fontSize: "0.85rem", color: "var(--gray-500)", lineHeight: 1.5 }}>
-            แชร์โค้ดหรือลิงก์คำเชิญของคุณ<br />เพื่อให้เพื่อนเข้าร่วม Persona Health
+            แชร์รหัสหรือลิงก์เชิญให้เพื่อน<br />เข้าร่วม Persona Health ด้วยกัน
           </p>
         </div>
 

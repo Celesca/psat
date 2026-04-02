@@ -61,26 +61,25 @@ export default function NotificationsPage() {
           alignItems: "center",
         }}
       >
-        <Link href="/" legacyBehavior>
-          <a
-            style={{
-              width: 32,
-              height: 32,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: "50%",
-              background: "var(--gray-100)",
-              textDecoration: "none",
-              color: "var(--gray-800)",
-              marginRight: 12,
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="19" y1="12" x2="5" y2="12" />
-              <polyline points="12 19 5 12 12 5" />
-            </svg>
-          </a>
+        <Link
+          href="/"
+          style={{
+            width: 32,
+            height: 32,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            borderRadius: "50%",
+            background: "var(--gray-100)",
+            textDecoration: "none",
+            color: "var(--gray-800)",
+            marginRight: 12,
+          }}
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12" />
+            <polyline points="12 19 5 12 12 5" />
+          </svg>
         </Link>
         <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--gray-800)" }}>
           การแจ้งเตือน

@@ -25,7 +25,7 @@ const categoryMeta: Record<
 > = {
   restaurant: { color: "#16a34a", bg: "#f0fdf4", label: "ร้านอาหารสุขภาพ", icon: "🥗" },
   event:      { color: "#7c3aed", bg: "#f5f3ff", label: "กิจกรรมสุขภาพ",   icon: "🏃" },
-  gym:        { color: "#ca8a04", bg: "#fefce8", label: "Gym",              icon: "🏋️" },
+  gym:        { color: "#ca8a04", bg: "#fefce8", label: "ฟิตเนส",           icon: "🏋️" },
   hospital:   { color: "#dc2626", bg: "#fef2f2", label: "โรงพยาบาล",       icon: "🏥" },
 };
 
@@ -68,7 +68,7 @@ export default function ShopsPage() {
     { key: "all",        label: "ทั้งหมด",          color: "#525252" },
     { key: "restaurant", label: "ร้านอาหารสุขภาพ",  color: "#16a34a" },
     { key: "event",      label: "กิจกรรมสุขภาพ",    color: "#7c3aed" },
-    { key: "gym",        label: "Gym",               color: "#ca8a04" },
+    { key: "gym",        label: "ฟิตเนส",             color: "#ca8a04" },
     { key: "hospital",   label: "โรงพยาบาล",        color: "#dc2626" },
   ];
 

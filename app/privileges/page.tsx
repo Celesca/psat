@@ -48,7 +48,7 @@ export default function PrivilegesPage() {
           <span>👍</span> แนะนำ
         </button>
         <button style={{ flexShrink: 0, padding: "6px 14px", borderRadius: 20, background: "var(--gray-50)", color: "var(--gray-700)", border: "1px solid var(--gray-200)", fontSize: "0.8rem", fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
-          <span style={{ background: "#65a30d", color: "white", padding: "2px 4px", borderRadius: 4, fontSize: "0.55rem", fontWeight: 700 }}>NEW</span> ล่าสุด
+          <span style={{ background: "#65a30d", color: "white", padding: "2px 6px", borderRadius: 4, fontSize: "0.55rem", fontWeight: 700 }}>ใหม่</span> ล่าสุด
         </button>
         <button style={{ flexShrink: 0, padding: "6px 14px", borderRadius: 20, background: "var(--gray-50)", color: "var(--gray-700)", border: "1px solid var(--gray-200)", fontSize: "0.8rem", fontWeight: 500, display: "flex", alignItems: "center", gap: 6 }}>
           <span>📊</span> คะแนนจากน้อย &gt; มาก

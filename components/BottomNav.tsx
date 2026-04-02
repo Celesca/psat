@@ -38,7 +38,7 @@ export default function BottomNav() {
           <circle cx="12" cy="13" r="4" />
         </svg>
       ),
-      label: "Scan",
+      label: "สแกน",
       href: "/scan",
       isScan: true,
     },
@@ -90,94 +90,94 @@ export default function BottomNav() {
 
         if (tab.isScan) {
           return (
-            <Link key={tab.label} href={tab.href} legacyBehavior>
-              <a
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  gap: 2,
-                  textDecoration: "none",
-                  marginTop: -18,
-                  position: "relative",
-                }}
-              >
-                <div
-                  style={{
-                    width: 56,
-                    height: 56,
-                    borderRadius: "50%",
-                    background: "linear-gradient(135deg, #4ade80, #16a34a)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    boxShadow: "0 4px 16px rgba(34, 197, 94, 0.4)",
-                    border: "3px solid white",
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  {tab.icon(false)}
-                </div>
-                <span
-                  style={{
-                    fontSize: "0.55rem",
-                    fontWeight: 600,
-                    color: "var(--green-600)",
-                    textAlign: "center",
-                    marginTop: 2,
-                  }}
-                >
-                  {tab.label}
-                </span>
-              </a>
-            </Link>
-          );
-        }
-
-        return (
-          <Link key={tab.label} href={tab.href} legacyBehavior>
-            <a
+            <Link
+              key={tab.label}
+              href={tab.href}
               style={{
-                background: "none",
-                border: "none",
-                cursor: "pointer",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 gap: 2,
-                padding: "8px 4px 6px",
-                fontFamily: "inherit",
-                minWidth: 56,
                 textDecoration: "none",
-                transition: "all 0.2s ease",
+                marginTop: -18,
+                position: "relative",
               }}
             >
-              {tab.icon(isActive)}
+              <div
+                style={{
+                  width: 56,
+                  height: 56,
+                  borderRadius: "50%",
+                  background: "linear-gradient(135deg, #4ade80, #16a34a)",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  boxShadow: "0 4px 16px rgba(34, 197, 94, 0.4)",
+                  border: "3px solid white",
+                  transition: "all 0.3s ease",
+                }}
+              >
+                {tab.icon(false)}
+              </div>
               <span
                 style={{
                   fontSize: "0.55rem",
-                  fontWeight: isActive ? 700 : 500,
-                  color: isActive ? "var(--green-600)" : "var(--gray-400)",
+                  fontWeight: 600,
+                  color: "var(--green-600)",
                   textAlign: "center",
-                  lineHeight: 1.3,
-                  whiteSpace: "pre-line",
                   marginTop: 2,
                 }}
               >
                 {tab.label}
               </span>
-              {isActive && (
-                <div
-                  style={{
-                    width: 4,
-                    height: 4,
-                    borderRadius: "50%",
-                    background: "var(--green-500)",
-                    marginTop: 1,
-                  }}
-                />
-              )}
-            </a>
+            </Link>
+          );
+        }
+
+        return (
+          <Link
+            key={tab.label}
+            href={tab.href}
+            style={{
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 2,
+              padding: "8px 4px 6px",
+              fontFamily: "inherit",
+              minWidth: 56,
+              textDecoration: "none",
+              transition: "all 0.2s ease",
+            }}
+          >
+            {tab.icon(isActive)}
+            <span
+              style={{
+                fontSize: "0.55rem",
+                fontWeight: isActive ? 700 : 500,
+                color: isActive ? "var(--green-600)" : "var(--gray-400)",
+                textAlign: "center",
+                lineHeight: 1.3,
+                whiteSpace: "pre-line",
+                marginTop: 2,
+              }}
+            >
+              {tab.label}
+            </span>
+            {isActive && (
+              <div
+                style={{
+                  width: 4,
+                  height: 4,
+                  borderRadius: "50%",
+                  background: "var(--green-500)",
+                  marginTop: 1,
+                }}
+              />
+            )}
           </Link>
         );
       })}
