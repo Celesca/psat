@@ -638,7 +638,7 @@ export default function Chatbot() {
               }}
             />
             <button
-              onClick={sendMessage}
+              onClick={() => sendMessage()}
               disabled={!input.trim() || loading}
               style={{
                 width: 42,
