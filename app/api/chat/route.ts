@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// ── Mock Tools the AI agent can select ──────────────────────────
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+
+// ── Tools the AI agent can select ───────────────────────────────
 const TOOLS = [
   {
     name: "search_health_knowledge",
@@ -39,12 +42,14 @@ const KNOWLEDGE_BASE: Record<string, string[]> = {
     "ผักและผลไม้ 5 สีช่วยให้ได้รับสารอาหารครบถ้วน",
     "ความดันโลหิตปกติควรอยู่ที่ 120/80 mmHg",
     "การเดิน 10,000 ก้าวต่อวันช่วยรักษาสุขภาพหัวใจ",
+    "ข้อมูลสุขภาพวันนี้: ก้าวเดิน 8,247 ก้าว, แคลอรี่ 1,840 kcal, หัวใจเต้น 72 bpm, นอน 7.2 ชม., BMI 22.4, ความดัน 118/76, ออกซิเจน 98%",
   ],
   lookup_privileges: [
     "คูปองส่วนลด 20% ร้านอาหารสุขภาพ (หมดเขต 30 เม.ย. 2026)",
     "แลก 500 แต้มรับฟรีตรวจสุขภาพประจำปี",
     "สิทธิพิเศษสมาชิก Gold: ส่วนลด 15% ร้านยา",
     "โปรโมชั่นใหม่: สะสมแต้มx2 เมื่อเดินครบ 8,000 ก้าว/วัน",
+    "คะแนนสะสมปัจจุบัน: 275 คะแนน",
   ],
   find_nearby_shops: [
     "ร้านยา Pharma Plus - ห่าง 0.3 กม. (เปิด 08:00-22:00)",
@@ -57,6 +62,7 @@ const KNOWLEDGE_BASE: Record<string, string[]> = {
     "ต้องการอีก 550 แต้มเพื่อเลื่อนเป็น Platinum",
     "เดือนนี้เดินเฉลี่ย 7,200 ก้าว/วัน",
     "Badge ที่ได้รับ: นักเดิน, สายสุขภาพ, Early Bird",
+    "สุขภาพโดยรวม: 92/100, การออกกำลังกาย: 78/100, กลุ่มกิจกรรม: 65/100",
   ],
   scan_product_info: [
     "สแกน QR Code เพื่อดูข้อมูลโภชนาการของสินค้า",
@@ -76,7 +82,6 @@ function selectTools(message: string): string[] {
     }
   }
 
-  // Default to health knowledge if no tools matched
   if (selected.length === 0) {
     selected.push("search_health_knowledge");
   }
@@ -90,31 +95,41 @@ function retrieveContext(toolNames: string[]): string[] {
   for (const name of toolNames) {
     const entries = KNOWLEDGE_BASE[name];
     if (entries) {
-      // Simulate retrieving top-k relevant documents
       const shuffled = [...entries].sort(() => Math.random() - 0.5);
-      docs.push(...shuffled.slice(0, 2));
+      docs.push(...shuffled.slice(0, 3));
     }
   }
   return docs;
 }
 
-// ── Generate mock response ──────────────────────────────────────
-function generateResponse(
-  message: string,
-  toolNames: string[],
-  context: string[]
-): string {
-  const toolDescriptions = toolNames
+// ── Build system prompt ─────────────────────────────────────────
+function buildSystemPrompt(toolNames: string[], context: string[]): string {
+  const toolList = toolNames
     .map((name) => {
       const tool = TOOLS.find((t) => t.name === name);
-      return tool ? `- ${tool.description}` : "";
+      return tool ? `- ${tool.name}: ${tool.description}` : "";
     })
     .filter(Boolean)
     .join("\n");
 
-  const contextStr = context.map((c) => `• ${c}`).join("\n");
+  const contextStr = context.map((c) => `- ${c}`).join("\n");
 
-  return `จากการค้นหาข้อมูลให้คุณ ฉันพบข้อมูลที่เกี่ยวข้องดังนี้:\n\n${contextStr}\n\nหากต้องการข้อมูลเพิ่มเติม สามารถถามได้เลยค่ะ 😊`;
+  return `คุณคือ "Health Hub AI Assistant" ผู้ช่วยด้านสุขภาพอัจฉริยะในแอปพลิเคชัน Health Hub (รวมสุข)
+คุณเป็น AI Agent ที่สามารถเลือกใช้เครื่องมือต่างๆ เพื่อตอบคำถามผู้ใช้
+
+## เครื่องมือที่เลือกใช้สำหรับคำถามนี้:
+${toolList}
+
+## ข้อมูลที่ดึงมาจากฐานข้อมูล (RAG Context):
+${contextStr}
+
+## กฎการตอบ:
+- ตอบเป็นภาษาไทยเสมอ
+- ใช้ข้อมูลจาก RAG Context ด้านบนเป็นหลักในการตอบ
+- ตอบกระชับ ตรงประเด็น ไม่เกิน 3-4 ประโยค
+- ใส่ emoji เล็กน้อยเพื่อความเป็นกันเอง
+- หากไม่มีข้อมูลเพียงพอ ให้แนะนำให้ผู้ใช้ปรึกษาแพทย์
+- อย่าแต่งข้อมูลที่ไม่มีใน context`;
 }
 
 // ── POST handler ────────────────────────────────────────────────
@@ -123,10 +138,7 @@ export async function POST(req: NextRequest) {
     const { message, history } = await req.json();
 
     if (!message || typeof message !== "string") {
-      return NextResponse.json(
-        { error: "Message is required" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Message is required" }, { status: 400 });
     }
 
     // Step 1: Agent selects tools
@@ -135,11 +147,52 @@ export async function POST(req: NextRequest) {
     // Step 2: RAG retrieval
     const context = retrieveContext(selectedTools);
 
-    // Step 3: Generate response with context
-    const reply = generateResponse(message, selectedTools, context);
+    // Step 3: Build messages for LLM
+    const systemPrompt = buildSystemPrompt(selectedTools, context);
 
-    // Simulate latency
-    await new Promise((resolve) => setTimeout(resolve, 600 + Math.random() * 800));
+    const chatMessages = [
+      { role: "system", content: systemPrompt },
+      ...(Array.isArray(history)
+        ? history.slice(-10).map((m: { role: string; content: string }) => ({
+            role: m.role,
+            content: m.content,
+          }))
+        : []),
+      { role: "user", content: message },
+    ];
+
+    // Step 4: Call OpenRouter API (or fallback to mock)
+    let reply: string;
+
+    if (OPENROUTER_API_KEY && OPENROUTER_API_KEY !== "your-openrouter-api-key-here") {
+      const response = await fetch(OPENROUTER_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        },
+        body: JSON.stringify({
+          model: "openai/gpt-4o-mini",
+          messages: chatMessages,
+          max_tokens: 500,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("OpenRouter error:", response.status, errorText);
+        reply = "ขออภัยค่ะ ระบบ AI ขัดข้อง กรุณาลองใหม่อีกครั้ง 🙏";
+      } else {
+        const data = await response.json();
+        reply = data.choices?.[0]?.message?.content ?? "ขออภัยค่ะ ไม่สามารถประมวลผลได้ 🙏";
+      }
+    } else {
+      // Fallback: mock response when no API key
+      await new Promise((resolve) => setTimeout(resolve, 600 + Math.random() * 800));
+      const contextStr = context.map((c) => `• ${c}`).join("\n");
+      reply = `จากการค้นหาข้อมูลให้คุณ ฉันพบข้อมูลที่เกี่ยวข้องดังนี้:\n\n${contextStr}\n\nหากต้องการข้อมูลเพิ่มเติม สามารถถามได้เลยค่ะ 😊\n\n⚠️ (Mock mode — ใส่ OPENROUTER_API_KEY ใน .env.local เพื่อเชื่อมต่อ AI จริง)`;
+    }
 
     return NextResponse.json({
       reply,
@@ -151,10 +204,8 @@ export async function POST(req: NextRequest) {
         rag_documents: context,
       },
     });
-  } catch {
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error("Chat API error:", err);
+    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
   }
 }

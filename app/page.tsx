@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
-import RankSection from "@/components/RankSection";
 import HealthDataSection from "@/components/HealthDataSection";
 import AppIntegrationSection from "@/components/AppIntegrationSection";
 import BottomNav from "@/components/BottomNav";
@@ -20,29 +19,27 @@ interface UserData {
   provider?: string;
 }
 
-/* ─── static data ─── */
-const knowledgeCards = [
-  { title: "โภชนาการที่ดี",       subtitle: "เคล็ดลับการกินอาหาร" },
-  { title: "ลดน้ำหนักอย่างยั่งยืน", subtitle: "วิธีที่ได้ผลระยะยาว" },
-  { title: "คุณภาพการนอนหลับ",     subtitle: "พักผ่อนให้เพียงพอ" },
-  { title: "สุขภาพจิตใจ",         subtitle: "ดูแลใจให้แข็งแรง" },
+/* ── Mock data ── */
+const recentActivities = [
+  { icon: "🏃", label: "วิ่ง 3.2 กม.", time: "08:30", cal: 245, color: "#16a34a" },
+  { icon: "🧘", label: "โยคะ 30 นาที", time: "07:00", cal: 120, color: "#7c3aed" },
+  { icon: "🚴", label: "ปั่นจักรยาน 5 กม.", time: "เมื่อวาน", cal: 180, color: "#2563eb" },
+  { icon: "🏊", label: "ว่ายน้ำ 45 นาที", time: "เมื่อวาน", cal: 320, color: "#0891b2" },
 ];
 
-const nearbyServices = [
-  { title: "ร้านอาหารสุขภาพ", icon: "🥗" },
-  { title: "ฟิตเนส",           icon: "🏋️" },
-  { title: "คลินิก",           icon: "🏥" },
-  { title: "สวนสาธารณะ",       icon: "🌳" },
+const healthTips = [
+  { title: "ดื่มน้ำให้เพียงพอ", desc: "เพิ่มน้ำอีก 3 แก้ววันนี้", icon: "💧", bg: "#dbeafe" },
+  { title: "นอนหลับให้ครบ", desc: "เป้าหมาย 8 ชม. คืนนี้", icon: "🌙", bg: "#ede9fe" },
+  { title: "เดินเพิ่มอีกนิด", desc: "อีก 1,753 ก้าวถึงเป้า!", icon: "👟", bg: "#dcfce7" },
 ];
 
-const activityCards = [
-  { title: "วิ่งออกกำลังกาย", icon: "🏃" },
-  { title: "ว่ายน้ำ",         icon: "🏊" },
-  { title: "โยคะ",           icon: "🧘" },
-  { title: "ปั่นจักรยาน",    icon: "🚴" },
+const connectedSources = [
+  { name: "Apple Health", status: "synced", time: "5 นาทีที่แล้ว", color: "#16a34a" },
+  { name: "Garmin Watch", status: "synced", time: "12 นาทีที่แล้ว", color: "#16a34a" },
+  { name: "หมอพร้อม", status: "synced", time: "1 ชม. ที่แล้ว", color: "#16a34a" },
 ];
 
-/* ─── page ─── */
+/* ── Page ── */
 export default function HomePage() {
   const router = useRouter();
   const [user, setUser] = useState<UserData | null>(null);
@@ -50,7 +47,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const userData    = localStorage.getItem("user");
+    const userData = localStorage.getItem("user");
     const profileData = localStorage.getItem("userProfile");
     if (!userData || !profileData) { router.push("/login"); return; }
     setUser(JSON.parse(userData));
@@ -62,7 +59,6 @@ export default function HomePage() {
     return (
       <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "linear-gradient(180deg, var(--green-50) 0%, #ffffff 40%)" }}>
         <div style={{ width: 36, height: 36, border: "3px solid var(--gray-200)", borderTopColor: "var(--green-500)", borderRadius: "50%", animation: "spin 0.6s linear infinite" }} />
-        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
       </div>
     );
   }
@@ -72,144 +68,90 @@ export default function HomePage() {
       <Header />
 
       <main style={{ padding: "14px 14px 0" }}>
-        <RankSection />
-
-        {/* โฆษณา */}
-        <div className="animate-fade-in-up" style={{ animationDelay: "0.05s", marginBottom: 14 }}>
-          <div
-            style={{
-              border: "1.5px dashed var(--green-300)",
-              borderRadius: 14,
-              padding: "14px 16px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              background: "var(--green-50)",
-              minHeight: 56,
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--green-100)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green-700)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-                </svg>
-              </div>
-              <span style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--green-700)" }}>โฆษณา</span>
-            </div>
-            <span style={{ fontSize: "0.68rem", color: "var(--green-600)", fontWeight: 500, opacity: 0.8 }}>สปอนเซอร์</span>
-          </div>
+        {/* Greeting */}
+        <div className="animate-fade-in-up" style={{ marginBottom: 14 }}>
+          <p style={{ fontSize: "0.78rem", color: "var(--gray-500)", marginBottom: 2 }}>
+            {new Date().toLocaleDateString("th-TH", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+          </p>
+          <p style={{ fontSize: "1rem", fontWeight: 700, color: "var(--gray-800)" }}>
+            สรุปข้อมูลสุขภาพของคุณ
+          </p>
         </div>
 
+        {/* Health Dashboard */}
         <HealthDataSection />
 
-        <AppIntegrationSection />
+        {/* Data Sources Status */}
+        <div className="card animate-fade-in-up" style={{ padding: 14, marginBottom: 14, animationDelay: "0.15s" }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--green-50)", border: "1px solid var(--green-100)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--green-600)" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" /><polyline points="22 4 12 14.01 9 11.01" /></svg>
+              </div>
+              <span style={{ fontWeight: 700, fontSize: "0.85rem", color: "var(--gray-800)" }}>แหล่งข้อมูลที่เชื่อมต่อ</span>
+            </div>
+            <span style={{ fontSize: "0.65rem", fontWeight: 600, background: "var(--green-50)", color: "var(--green-700)", padding: "3px 10px", borderRadius: 20, border: "1px solid var(--green-100)" }}>
+              {connectedSources.length} แหล่ง
+            </span>
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {connectedSources.map((src) => (
+              <div key={src.name} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: "var(--gray-50)", borderRadius: 10 }}>
+                <div style={{ width: 8, height: 8, borderRadius: "50%", background: src.color, flexShrink: 0, boxShadow: `0 0 6px ${src.color}40` }} />
+                <span style={{ flex: 1, fontSize: "0.78rem", fontWeight: 600, color: "var(--gray-700)" }}>{src.name}</span>
+                <span style={{ fontSize: "0.62rem", color: "var(--gray-400)" }}>{src.time}</span>
+              </div>
+            ))}
+          </div>
+        </div>
 
-        {/* โฆษณาภาครัฐ */}
+        {/* Health Tips */}
         <div className="animate-fade-in-up" style={{ animationDelay: "0.2s", marginBottom: 14 }}>
-          <div
-            style={{
-              border: "1.5px dashed var(--orange-300)",
-              borderRadius: 14,
-              padding: "14px 16px",
-              background: "var(--orange-50)",
-              minHeight: 56,
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                <div style={{ width: 28, height: 28, borderRadius: 8, background: "var(--orange-100)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--orange-600)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3zm-8.27 4a2 2 0 0 1-3.46 0" />
-                  </svg>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <h3 style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--gray-800)" }}>
+              คำแนะนำสำหรับคุณ
+            </h3>
+          </div>
+          <div className="hide-scroll" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 4 }}>
+            {healthTips.map((tip) => (
+              <div key={tip.title} style={{ flex: "0 0 150px", background: "white", borderRadius: 14, border: "1px solid var(--gray-100)", padding: 14, boxShadow: "var(--shadow-sm)" }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: tip.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", marginBottom: 10 }}>
+                  {tip.icon}
                 </div>
-                <span style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--orange-600)" }}>โฆษณาภาครัฐ</span>
+                <p style={{ fontWeight: 700, fontSize: "0.78rem", color: "var(--gray-800)", marginBottom: 4, lineHeight: 1.3 }}>{tip.title}</p>
+                <p style={{ fontSize: "0.65rem", color: "var(--gray-400)", lineHeight: 1.4 }}>{tip.desc}</p>
               </div>
-              <span style={{ fontSize: "0.68rem", fontWeight: 700, background: "var(--orange-100)", color: "var(--orange-600)", borderRadius: 20, padding: "3px 10px", border: "1px solid var(--orange-200)" }}>
-                10 สัปดาห์
-              </span>
-            </div>
+            ))}
           </div>
         </div>
 
-        {/* บทความสุขภาพ */}
+        {/* Recent Activities */}
         <div className="card animate-fade-in-up" style={{ padding: 14, marginBottom: 14, animationDelay: "0.25s" }}>
-          <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 10 }}>
-            <div style={{ flex: 1 }}>
-              <p style={{ fontWeight: 700, fontSize: "0.88rem", color: "var(--gray-800)", marginBottom: 4, lineHeight: 1.4 }}>
-                เนื้อหาพัฒนาสุขภาพในแอปพลิเคชัน
-              </p>
-              <p style={{ fontSize: "0.75rem", color: "var(--gray-500)", marginBottom: 10, lineHeight: 1.5 }}>
-                จำนวนก้าวต่อวัน — พื้นฐานสุขภาพที่ดี
-              </p>
-              <div style={{ display: "inline-flex", alignItems: "center", gap: 4, background: "var(--orange-50)", border: "1px solid var(--orange-200)", borderRadius: 20, padding: "3px 12px" }}>
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--orange-600)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2" />
-                </svg>
-                <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "var(--orange-600)" }}>100 คะแนน</span>
-              </div>
-            </div>
-            <div style={{ width: 52, height: 52, borderRadius: 12, background: "var(--green-100)", flexShrink: 0 }} />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+            <h3 style={{ fontSize: "0.9rem", fontWeight: 700, color: "var(--gray-800)" }}>กิจกรรมล่าสุด</h3>
+            <span style={{ fontSize: "0.68rem", color: "var(--green-600)", fontWeight: 600, cursor: "pointer" }}>ดูทั้งหมด →</span>
           </div>
-        </div>
-
-        {/* ความรู้ด้านสุขภาพ */}
-        <div className="animate-fade-in-up" style={{ animationDelay: "0.3s", marginBottom: 14 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--gray-800)" }}>
-              ความรู้ด้านสุขภาพ
-            </h3>
-            <span style={{ fontSize: "0.72rem", color: "var(--green-600)", fontWeight: 600, cursor: "pointer" }}>ดูทั้งหมด →</span>
-          </div>
-          <div className="hide-scroll" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6, scrollSnapType: "x mandatory" }}>
-            {knowledgeCards.map((c) => (
-              <div key={c.title} style={{ flex: "0 0 130px", scrollSnapAlign: "start", background: "white", borderRadius: 12, border: "1px solid var(--gray-100)", boxShadow: "var(--shadow-sm)", padding: 10, display: "flex", flexDirection: "column", gap: 4 }}>
-                <div style={{ width: "100%", height: 72, borderRadius: 8, background: "var(--green-100)", marginBottom: 4 }} />
-                <p style={{ fontWeight: 600, fontSize: "0.8rem", color: "var(--gray-800)", lineHeight: 1.3 }}>{c.title}</p>
-                <p style={{ fontSize: "0.68rem", color: "var(--gray-400)" }}>{c.subtitle}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ร้านค้าและบริการใกล้คุณ */}
-        <div className="animate-fade-in-up" style={{ animationDelay: "0.35s", marginBottom: 14 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--gray-800)" }}>
-              บริการใกล้คุณ
-            </h3>
-            <span style={{ fontSize: "0.72rem", color: "var(--green-600)", fontWeight: 600, cursor: "pointer" }}>ดูทั้งหมด →</span>
-          </div>
-          <div className="hide-scroll" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6, scrollSnapType: "x mandatory" }}>
-            {nearbyServices.map((s) => (
-              <div key={s.title} style={{ flex: "0 0 120px", scrollSnapAlign: "start", background: "white", borderRadius: 12, border: "1px solid var(--gray-100)", boxShadow: "var(--shadow-sm)", padding: 10, display: "flex", flexDirection: "column", gap: 4, alignItems: "center", textAlign: "center" }}>
-                <div style={{ width: "100%", height: 72, borderRadius: 8, background: "var(--green-50)", marginBottom: 4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.8rem" }}>
-                  {s.icon}
+          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            {recentActivities.map((act, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, padding: "8px 10px", background: "var(--gray-50)", borderRadius: 10, transition: "background 0.2s ease" }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: "white", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.1rem", border: "1px solid var(--gray-100)", flexShrink: 0 }}>
+                  {act.icon}
                 </div>
-                <p style={{ fontWeight: 600, fontSize: "0.8rem", color: "var(--gray-800)" }}>{s.title}</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontWeight: 600, fontSize: "0.78rem", color: "var(--gray-800)" }}>{act.label}</p>
+                  <p style={{ fontSize: "0.62rem", color: "var(--gray-400)" }}>{act.time}</p>
+                </div>
+                <div style={{ textAlign: "right", flexShrink: 0 }}>
+                  <p style={{ fontSize: "0.75rem", fontWeight: 700, color: act.color }}>{act.cal}</p>
+                  <p style={{ fontSize: "0.55rem", color: "var(--gray-400)" }}>kcal</p>
+                </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* กิจกรรมสุขภาพ */}
-        <div className="animate-fade-in-up" style={{ animationDelay: "0.4s", marginBottom: 8 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 10 }}>
-            <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--gray-800)" }}>
-              กิจกรรมสุขภาพ
-            </h3>
-            <span style={{ fontSize: "0.72rem", color: "var(--green-600)", fontWeight: 600, cursor: "pointer" }}>ดูทั้งหมด →</span>
-          </div>
-          <div className="hide-scroll" style={{ display: "flex", gap: 10, overflowX: "auto", paddingBottom: 6, scrollSnapType: "x mandatory" }}>
-            {activityCards.map((a) => (
-              <div key={a.title} style={{ flex: "0 0 120px", scrollSnapAlign: "start", background: "white", borderRadius: 12, border: "1px solid var(--gray-100)", boxShadow: "var(--shadow-sm)", padding: 10, display: "flex", flexDirection: "column", gap: 4, alignItems: "center", textAlign: "center" }}>
-                <div style={{ width: "100%", height: 72, borderRadius: 8, background: "var(--green-50)", marginBottom: 4, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.8rem" }}>
-                  {a.icon}
-                </div>
-                <p style={{ fontWeight: 600, fontSize: "0.8rem", color: "var(--gray-800)" }}>{a.title}</p>
-              </div>
-            ))}
-          </div>
-        </div>
+        {/* App Integration */}
+        <AppIntegrationSection />
       </main>
 
       <BottomNav />

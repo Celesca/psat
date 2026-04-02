@@ -12,7 +12,7 @@ export default function Header() {
       <div
         style={{
           background: "linear-gradient(135deg, var(--green-600) 0%, var(--green-700) 60%, var(--green-800) 100%)",
-          padding: "20px 16px 24px",
+          padding: "16px 16px 20px",
           borderRadius: "0 0 28px 28px",
           position: "relative",
           overflow: "hidden",
@@ -23,47 +23,60 @@ export default function Header() {
         <div style={{ position: "absolute", bottom: -24, left: -24, width: 90, height: 90, borderRadius: "50%", background: "rgba(255,255,255,0.05)", pointerEvents: "none" }} />
         <div style={{ position: "absolute", top: 10, left: "40%", width: 60, height: 60, borderRadius: "50%", background: "rgba(255,255,255,0.04)", pointerEvents: "none" }} />
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 10 }}>
-          {/* Profile button */}
-          <Link href="/profile" legacyBehavior>
-            <a
+        {/* Top row: Logo + brand + actions */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", zIndex: 10, marginBottom: 14 }}>
+          {/* Logo + Brand */}
+          <Link href="/" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/logo.jpg"
+              alt="รวมสุข"
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
+                width: 44,
+                height: 44,
+                borderRadius: 12,
+                border: "2px solid rgba(255,255,255,0.3)",
+                boxShadow: "0 2px 12px rgba(0,0,0,0.15)",
+                objectFit: "cover",
+              }}
+            />
+            <div>
+              <p style={{ fontSize: "1.1rem", color: "white", fontWeight: 800, letterSpacing: "-0.01em", lineHeight: 1.2 }}>รวมสุข</p>
+              <p style={{ fontSize: "0.6rem", color: "rgba(255,255,255,0.7)", fontWeight: 500, letterSpacing: "0.04em" }}>Health Hub</p>
+            </div>
+          </Link>
+
+          {/* Actions */}
+          <div style={{ display: "flex", gap: 6 }}>
+            <Link
+              href="/profile"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 12,
                 background: "rgba(255,255,255,0.15)",
-                backdropFilter: "blur(8px)",
                 border: "1px solid rgba(255,255,255,0.25)",
-                borderRadius: 14,
-                padding: "8px 14px",
                 color: "white",
                 cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
                 textDecoration: "none",
                 transition: "background 0.2s ease",
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                 <circle cx="12" cy="7" r="4" />
               </svg>
-              <span style={{ fontWeight: 600, fontSize: "0.85rem", letterSpacing: "0.01em" }}>โปรไฟล์</span>
-            </a>
-          </Link>
+            </Link>
 
-          {/* App name in center */}
-          <div style={{ textAlign: "center" }}>
-            <p style={{ fontSize: "0.65rem", color: "rgba(255,255,255,0.7)", fontWeight: 500, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 1 }}>Persona Health</p>
-            <p style={{ fontSize: "1.05rem", color: "white", fontWeight: 700, letterSpacing: "-0.01em" }}>รวมสุข</p>
-          </div>
-
-          {/* Actions */}
-          <div style={{ display: "flex", gap: 6 }}>
             <button
               onClick={() => setIsInviteOpen(true)}
               aria-label="เชิญเพื่อน"
               style={{
-                width: 40,
-                height: 40,
+                width: 38,
+                height: 38,
                 borderRadius: 12,
                 background: "rgba(255,255,255,0.15)",
                 border: "1px solid rgba(255,255,255,0.25)",
@@ -76,7 +89,7 @@ export default function Header() {
                 transition: "background 0.2s ease",
               }}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
                 <circle cx="9" cy="7" r="4" />
                 <line x1="19" y1="8" x2="19" y2="14" />
@@ -84,42 +97,41 @@ export default function Header() {
               </svg>
             </button>
 
-            <Link href="/notifications" legacyBehavior>
-              <a
-                aria-label="การแจ้งเตือน"
+            <Link
+              href="/notifications"
+              aria-label="การแจ้งเตือน"
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 12,
+                background: "rgba(255,255,255,0.15)",
+                border: "1px solid rgba(255,255,255,0.25)",
+                color: "white",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                position: "relative",
+                textDecoration: "none",
+                transition: "background 0.2s ease",
+              }}
+            >
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+              </svg>
+              <span
                 style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  background: "rgba(255,255,255,0.15)",
-                  border: "1px solid rgba(255,255,255,0.25)",
-                  color: "white",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  position: "relative",
-                  textDecoration: "none",
-                  transition: "background 0.2s ease",
+                  position: "absolute",
+                  top: 8,
+                  right: 8,
+                  width: 7,
+                  height: 7,
+                  borderRadius: "50%",
+                  background: "#ef4444",
+                  border: "1.5px solid var(--green-700)",
                 }}
-              >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                  <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                </svg>
-                <span
-                  style={{
-                    position: "absolute",
-                    top: 9,
-                    right: 9,
-                    width: 7,
-                    height: 7,
-                    borderRadius: "50%",
-                    background: "#ef4444",
-                    border: "1.5px solid var(--green-700)",
-                  }}
-                />
-              </a>
+              />
             </Link>
           </div>
         </div>
@@ -127,7 +139,6 @@ export default function Header() {
         {/* Points banner */}
         <div
           style={{
-            marginTop: 16,
             background: "rgba(255,255,255,0.12)",
             backdropFilter: "blur(8px)",
             border: "1px solid rgba(255,255,255,0.2)",
