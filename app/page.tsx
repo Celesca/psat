@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
+import RankSection from "@/components/RankSection";
 import HealthDataSection from "@/components/HealthDataSection";
 import AppIntegrationSection from "@/components/AppIntegrationSection";
 import BottomNav from "@/components/BottomNav";
@@ -80,6 +81,9 @@ export default function HomePage() {
 
         {/* Health Dashboard */}
         <HealthDataSection />
+
+        {/* Leaderboard Preview */}
+        <RankSection />
 
         {/* Data Sources Status */}
         <div className="card animate-fade-in-up" style={{ padding: 14, marginBottom: 14, animationDelay: "0.15s" }}>
